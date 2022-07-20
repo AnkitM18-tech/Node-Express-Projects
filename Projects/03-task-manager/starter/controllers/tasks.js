@@ -20,7 +20,7 @@ const createTask = asyncWrapper(async (req, res) => {
   res.status(201).json({ task });
 });
 
-const getTask = asyncWrapper(async (req, res) => {
+const getTask = asyncWrapper(async (req, res, next) => {
   const { id: taskID } = req.params;
   const task = await Task.findOne({ _id: taskID });
   if (!task) {
@@ -32,7 +32,7 @@ const getTask = asyncWrapper(async (req, res) => {
     res.status(500).json({ msg: error }); // when there is more than the number of characters added in id.(cast error) or syntax error in mentioning id. 
   }*/
 });
-const updateTask = asyncWrapper(async (req, res) => {
+const updateTask = asyncWrapper(async (req, res, next) => {
   const { id: taskID } = req.params;
   const task = await Task.findOneAndUpdate({ _id: taskID }, req.body, {
     new: true, // to get the new value
@@ -44,7 +44,7 @@ const updateTask = asyncWrapper(async (req, res) => {
   }
   res.status(200).json({ task });
 });
-const deleteTask = asyncWrapper(async (req, res) => {
+const deleteTask = asyncWrapper(async (req, res, next) => {
   const { id: taskID } = req.params;
   const task = await Task.findOneAndDelete({ _id: taskID });
   if (!task) {
