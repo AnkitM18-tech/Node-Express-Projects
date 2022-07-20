@@ -3,6 +3,13 @@ const getAllTasks = async (req, res) => {
   try {
     const tasks = await Task.find({});
     res.status(200).json({ tasks });
+    // res.status(200).json({ tasks,amount:tasks.length });
+    // res
+    //   .status(200)
+    //   .json({ success: true, data: { tasks, nbHits: tasks.length } }); //axios right away returns a data object so if we are passing data object then we need to handle that in frontend.
+    // res
+    //   .status(200)
+    //   .json({ status: "success", data: { tasks, nbHits: tasks.length } });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
@@ -64,3 +71,5 @@ module.exports = {
   updateTask,
   deleteTask,
 };
+
+// put and patch are both for updating resources. -> while using put you are trying to replace existing resource. patch is for partial update. if we only enter the value that needs to be updated only that one will be updated in patch but in put we need to update the entire resource -> every value have to be passed. In put we need to pass another option -> overwrite:true, now if we pass only a single property then all other properties will be removed, and the resource will be overwritten, if there is no default value passed in schema. In patch only the property we provide will be updated, along with all other properties remaining unchanged.
