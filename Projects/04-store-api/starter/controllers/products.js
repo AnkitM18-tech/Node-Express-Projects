@@ -10,7 +10,7 @@ const getAllProductsStatic = async (req, res) => {
 };
 const getAllProducts = async (req, res) => {
   // console.log(req.query); we are getting the query params as an object in req.query so we can pass it directly to find.
-  const { featured, company, name } = req.query;
+  const { featured, company, name, sort } = req.query;
   const queryObject = {};
   if (featured) {
     queryObject.featured = featured === "true" ? true : false;
@@ -21,8 +21,18 @@ const getAllProducts = async (req, res) => {
   if (name) {
     queryObject.name = { $regex: name, $options: "i" };
   }
-  console.log(queryObject);
-  const products = await Product.find(queryObject);
+  // console.log(queryObject);
+  // const products = await Product.find(queryObject); we need to chain sort here , but there might a chance that user doesn't provide a sort, so we need to chain it conditionally and add await at the end.
+  let result = Product.find(queryObject);
+  // If sort exists then chain sort to its end.
+  if (sort) {
+    // console.log(sort);
+    const sortList = sort.split(",").join(" ");
+    result = result.sort(sortList);
+  } else {
+    result = result.sort("createdAt");
+  }
+  const products = await result;
   res.status(200).json({ products, nbHits: products.length });
 };
 
