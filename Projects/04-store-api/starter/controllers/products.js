@@ -3,7 +3,7 @@ const Product = require("../models/product");
 // for manually testing purpose
 const getAllProductsStatic = async (req, res) => {
   // const search = "a";
-  const products = await Product.find({})
+  const products = await Product.find({ price: { $gt: 30 } })
     .sort("name")
     .select("name price")
     .limit(10)
@@ -13,9 +13,10 @@ const getAllProductsStatic = async (req, res) => {
   /* throw new Error("Testing Async Package"); // instead of setting try..catch (own middleware) we can use express-async-error, which will handle the errors.No need to use async wrapper here. */
   res.status(200).json({ products, nbHits: products.length });
 };
+// actual route
 const getAllProducts = async (req, res) => {
   // console.log(req.query); we are getting the query params as an object in req.query so we can pass it directly to find.
-  const { featured, company, name, sort, fields } = req.query;
+  const { featured, company, name, sort, fields, numericFilters } = req.query;
   const queryObject = {};
   if (featured) {
     queryObject.featured = featured === "true" ? true : false;
@@ -26,7 +27,31 @@ const getAllProducts = async (req, res) => {
   if (name) {
     queryObject.name = { $regex: name, $options: "i" };
   }
-  // console.log(queryObject);
+  // convert to mongoose understandable regex query
+  if (numericFilters) {
+    // console.log(numericFilters);
+    const operatorMap = {
+      ">": "$gt",
+      ">=": "$gte",
+      "=": "$eq",
+      "<": "$lt",
+      "<=": "$lte",
+    };
+    const regEx = /\b(<|>|>=|<=|=)\b/g;
+    let filters = numericFilters.replace(
+      regEx,
+      (match) => `-${operatorMap[match]}-`
+    );
+    const options = ["price", "rating"];
+    filters = filters.split(",").forEach((item) => {
+      const [field, operator, value] = item.split("-");
+      if (options.includes(field)) {
+        queryObject[field] = { [operator]: Number(value) };
+      }
+    });
+    // console.log(filters);
+  }
+  console.log(queryObject);
   // const products = await Product.find(queryObject); we need to chain sort here , but there might a chance that user doesn't provide a sort, so we need to chain it conditionally and add await at the end.
   let result = Product.find(queryObject);
   // If sort exists then chain sort to its end.
