@@ -33,7 +33,7 @@ const getAllProducts = async (req, res) => {
   } else {
     result = result.sort("createdAt");
   }
-
+  // showing only selected fields
   if (fields) {
     const fieldsList = fields.split(",").join(" ");
     result = result.select(fieldsList);
