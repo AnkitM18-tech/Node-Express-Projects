@@ -3,14 +3,15 @@ const Product = require("../models/product");
 // for manually testing purpose
 const getAllProductsStatic = async (req, res) => {
   // const search = "a";
-  const products = await Product.find({}).sort("-name price");
+  const products = await Product.find({}).select("name price");
+  // const products = await Product.find({}).sort("-name price");
   // name: { $regex: search, $options: "i" }, // regex query operator
   /* throw new Error("Testing Async Package"); // instead of setting try..catch (own middleware) we can use express-async-error, which will handle the errors.No need to use async wrapper here. */
   res.status(200).json({ products, nbHits: products.length });
 };
 const getAllProducts = async (req, res) => {
   // console.log(req.query); we are getting the query params as an object in req.query so we can pass it directly to find.
-  const { featured, company, name, sort } = req.query;
+  const { featured, company, name, sort, fields } = req.query;
   const queryObject = {};
   if (featured) {
     queryObject.featured = featured === "true" ? true : false;
@@ -31,6 +32,11 @@ const getAllProducts = async (req, res) => {
     result = result.sort(sortList);
   } else {
     result = result.sort("createdAt");
+  }
+
+  if (fields) {
+    const fieldsList = fields.split(",").join(" ");
+    result = result.select(fieldsList);
   }
   const products = await result;
   res.status(200).json({ products, nbHits: products.length });
