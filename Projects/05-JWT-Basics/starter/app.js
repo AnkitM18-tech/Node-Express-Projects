@@ -11,8 +11,9 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 // middleware
 app.use(express.static("./public"));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/", mainRouter);
+app.use("/api/v1", mainRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
