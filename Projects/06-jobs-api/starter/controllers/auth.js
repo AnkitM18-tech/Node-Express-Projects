@@ -8,12 +8,12 @@ const register = async (req, res) => {
   if (!name || !email || !password) {
     throw new BadRequestError("Please provide a name,email and password");
   } */
-  const { name, email, password } = req.body;
+  /* const { name, email, password } = req.body;
   //   random bytes generation
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  const tempUser = { name, email, password: hashedPassword };
-  const user = await User.create({ ...tempUser });
+  const tempUser = { name, email, password: hashedPassword }; */
+  const user = await User.create({ ...req.body });
   res.status(StatusCodes.CREATED).json({ user });
 };
 
