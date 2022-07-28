@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -23,4 +24,10 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+// using function it will always point to "this" document, but if we use arrow function it won't bind to "this".Since we are not sending BadRequest so all these lines here is unnecessary., but if we are considering badrequest then it is required.In mongoose 5.x if we remove next it's still going to work.
+UserSchema.pre("save", async function () {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  //   next();
+});
 module.exports = mongoose.model("User", UserSchema);
