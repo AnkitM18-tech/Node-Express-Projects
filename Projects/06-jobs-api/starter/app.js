@@ -22,7 +22,14 @@ const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
 // extra packages
-app.use(rateLimiter);
+// If our application is behind reverse proxy, we need to add app.set()
+app.set("trust proxy", 1);
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  })
+);
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
