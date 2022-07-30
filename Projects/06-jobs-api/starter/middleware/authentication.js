@@ -12,6 +12,10 @@ const auth = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     // attach the user to job routes
+    // Find data in database instead of creating an object in next line.
+    /* const user = User.findById(payload.id).select("-password"); // select the password to remove it, no point to give back the password.
+    req.user = user; */
+
     req.user = { userId: payload.userId, name: payload.name };
     next();
   } catch (error) {
