@@ -67,3 +67,5 @@ Swagger UI
       required: true
       description: the job id
 ```
+
+Project has been deployed in Heroku and shifted to different folder in local.
