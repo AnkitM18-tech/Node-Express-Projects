@@ -69,3 +69,4 @@ Swagger UI
 ```
 
 Project has been deployed in Heroku and shifted to different folder in local.
+Swagger UI is used to display the API documentation.
